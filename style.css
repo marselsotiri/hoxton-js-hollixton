@@ -5,6 +5,10 @@
   
     font-family: sans-serif;
   }
+
+  a {
+    text-decoration: none;
+  }
   
   body {
     display: grid;
@@ -46,7 +50,23 @@
   }
   
   footer {
-    background-color: #0000ff40;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    background-color: hsl(0deg 0% 93%);
+  }
+
+  footer span {
+      display: grid;
+      justify-content: end;
+      padding-right: 1rem;
+  }
+
+  footer h2 {
+    display: grid;
+    justify-content: start;
+    padding-left: 1rem;
   }
   
   img {
@@ -103,5 +123,40 @@
     border-top-right-radius: 0.5rem;
   
     font-size: 0.8rem;
+  }
+  
+
+  .modal-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+  
+    background-color: #00000030;
+  
+    backdrop-filter: blur(2px);
+  
+    display: grid;
+    place-items: center;
+  }
+  
+  .modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+  
+    position: relative;
+  }
+
+
+  .modal__close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  
+    background: none;
+    border: none;
+    padding: 0.3rem;
   }
   

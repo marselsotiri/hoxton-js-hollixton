@@ -1,7 +1,66 @@
 const state = {
     store: [],
-    // selecteditem = null
+    tab: '',
+    modal: '',
+    search: '',
+    users: null,
+    selecteditem: null,
+    bag: []
   }
+
+  function renderSearchModal() {
+    const modalWrapperEl = document.createElement('div')
+    modalWrapperEl.setAttribute('class', 'modal-wrapper')
+    modalWrapperEl.addEventListener('click', function () {
+      state.modal = ''
+      render()
+    })
+  
+    const modalEl = document.createElement('div')
+    modalEl.setAttribute('class', 'modal')
+    modalEl.addEventListener('click', function (event) {
+      event.stopPropagation()
+    })
+  
+    const closeModalBtn = document.createElement('button')
+    closeModalBtn.setAttribute('class', 'modal__close-btn')
+    closeModalBtn.textContent = 'X'
+    closeModalBtn.addEventListener('click', function () {
+      state.modal = ''
+      render()
+    })
+  
+    const titleEl = document.createElement('h2')
+    titleEl.textContent = 'Search your favorite items!'
+  
+    const formEl = document.createElement('form')
+    formEl.addEventListener('submit', function (event) {
+      event.preventDefault()
+  
+      alert(`Searching for: ${searchInput.value}`)
+  
+      state.modal = ''
+  
+      render()
+    })
+  
+    const searchInput = document.createElement('input')
+  
+    formEl.append(searchInput)
+  
+    modalEl.append(closeModalBtn, titleEl, formEl)
+    modalWrapperEl.append(modalEl)
+  
+    document.body.append(modalWrapperEl)
+  }
+
+  function renderModal() {
+    if (state.modal === '') return
+  
+    if (state.modal === 'search') renderSearchModal()
+  }
+  
+  
   
   // Q: Which type of items should we show?
   // A: ❌
@@ -71,18 +130,24 @@ const state = {
     const liGirls = document.createElement('li')
     liGirls.setAttribute('class', 'header__left__item')
     const aGirl = document.createElement('a')
+    aGirl.setAttribute('href', '')
+
     aGirl.textContent = 'Girls'
     liGirls.append(aGirl)
 
     const liBoys = document.createElement('li')
     liBoys.setAttribute('class', 'header__left__item')
     const aBoys = document.createElement('a')
+    aBoys.setAttribute('href', '')
+
     aBoys.textContent = 'Boys'
     liBoys.append(aBoys)
 
     const liSale = document.createElement('li')
     liSale.setAttribute('class', 'header__left__item')
     const aSale = document.createElement('a')
+    aSale.setAttribute('href', '')
+
     aSale.textContent = 'Sale'
     liSale.append(aSale)
 
@@ -108,18 +173,36 @@ const state = {
     liSearch.setAttribute('class', 'header__right__item')
     const btnSearch = document.createElement('button')
     btnSearch.textContent = '🔍'
+    btnSearch.addEventListener('click', function () {
+        // update state
+        state.modal = 'search'
+        // render
+        render()
+      })
     liSearch.append(btnSearch)
 
     const liUser = document.createElement('li')
     liUser.setAttribute('class', 'header__right__item')
     const btnUser = document.createElement('button')
     btnUser.textContent = '🤦'
+    btnUser.addEventListener('click', function () {
+        // update state
+        state.modal = 'user'
+        // render
+        render()
+      })
     liUser.append(btnUser)
 
     const liCart = document.createElement('li')
     liCart.setAttribute('class', 'header__right__item')
     const btnCart = document.createElement('button')
     btnCart.textContent = '👜'
+    btnCart.addEventListener('click', function () {
+        // update state
+        state.modal = 'cart'
+        // render
+        render()
+      })
     liCart.append(btnCart)
 
     ulheaderRight.append(liSearch, liUser, liCart)
@@ -214,7 +297,7 @@ const state = {
     const footerEl = document.createElement('footer')
   
     const h2El = document.createElement('h2')
-    h2El.textContent = 'Footer'
+    h2El.textContent = 'Hollixton'
 
     const divEl = document.createElement('div')
 
@@ -232,6 +315,9 @@ const state = {
   
     document.body.append(footerEl)
   }
+
+
+
   
   function render() {
     document.body.innerHTML = ''
@@ -239,6 +325,7 @@ const state = {
     renderHeader()
     renderMain()
     renderFooter()
+    renderModal()
   }
   
   function init() {
