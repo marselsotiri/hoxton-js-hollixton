@@ -68,7 +68,7 @@
     justify-content: start;
     padding-left: 1rem;
   }
-  
+ 
   img {
     width: 100%;
   }
@@ -160,3 +160,6 @@
     padding: 0.3rem;
   }
   
+  form input {
+      width: 100%;
+  }
