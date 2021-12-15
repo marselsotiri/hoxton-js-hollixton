@@ -149,9 +149,9 @@ const state = {
     liBoys.setAttribute('class', 'header__left__item')
     const aBoys = document.createElement('a')
     aBoys.setAttribute('href', '#')
-    aBoys.textContent = 'Boys'
+    aBoys.textContent = 'Guys'
     aBoys.addEventListener('click', function () {
-        state.selectedFilter = 'Boys'
+        state.selectedFilter = 'Guys'
         state.selectedItem = null
         render()
     })
