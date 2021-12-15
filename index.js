@@ -1,10 +1,10 @@
 const state = {
     store: [],
-    tab: '',
     modal: '',
     search: '',
     users: null,
-    selecteditem: null,
+    selectedItem: null,
+    selectedFilter: '',
     bag: []
   }
 
@@ -59,15 +59,32 @@ const state = {
   
     if (state.modal === 'search') renderSearchModal()
   }
+
+  function getItemsToDisplay() {
+    let itemsToDisplay = state.store
   
+    if (state.selectedFilter === 'Girls') {
+      itemsToDisplay = itemsToDisplay.filter(item => item.type === 'Girls')
+    }
   
+    if (state.selectedFilter === 'Guys') {
+      itemsToDisplay = itemsToDisplay.filter(item => item.type === 'Guys')
+    }
   
-  // Q: Which type of items should we show?
-  // A: ❌
+    if (state.selectedFilter === 'Sale') {
+      itemsToDisplay = itemsToDisplay.filter(
+        item => item.discountedPrice !== undefined
+      )
+    }
   
-  // SERVER FUNCTIONS
+    // if (state.search !== '') {
+    //   // itemsToDisplay = itemsToDisplay.filter...
+    // }
   
-  // getStoreItems :: () => Promise<store>
+    return itemsToDisplay
+  }
+
+
   function getStoreItems() {
     return fetch('http://localhost:3000/store').then(resp => resp.json())
   }
@@ -94,32 +111,19 @@ const state = {
     // check if the product ms is more recent than 10 days ago
     return msForProductDate > msForTenDaysAgo
   }
-  
-  /*
-  <header>
-      <h1 class="logo">Hollixton</h1>
-      <nav class="header__left">
-        <ul class="header__left__list">
-          <li class="header__left__item"><a>Girls</a></li>
-          <li class="header__left__item"><a>Guys</a></li>
-          <li class="header__left__item"><a>Sale</a></li>
-        </ul>
-      </nav>
-      <nav class="header__right">
-        <ul class="header__right__list">
-          <li class="header__right__item"><button>🔍</button></li>
-          <li class="header__right__item"><button>🤦‍♀️</button></li>
-          <li class="header__right__item"><button>👜</button></li>
-        </ul>
-      </nav>
-  </header>
-  */
+
   
   function renderHeader() {
     const headerEl = document.createElement('header')
   
     const h1El = document.createElement('h1')
     h1El.textContent = 'Hollixton'
+    h1El.addEventListener('click', function () {
+        state.selectedFilter = 'Home'
+        state.selectedItem = null
+        render()
+    })
+
 
     const navItemLeft = document.createElement('nav')
     navItemLeft.setAttribute('class', 'header__left')
@@ -130,25 +134,41 @@ const state = {
     const liGirls = document.createElement('li')
     liGirls.setAttribute('class', 'header__left__item')
     const aGirl = document.createElement('a')
-    aGirl.setAttribute('href', '')
-
+    aGirl.setAttribute('href', '#')
     aGirl.textContent = 'Girls'
+    aGirl.addEventListener('click', function () {
+        state.selectedFilter = 'Girls'
+        state.selectedItem = null
+        render()
+    })
+        
+        
     liGirls.append(aGirl)
 
     const liBoys = document.createElement('li')
     liBoys.setAttribute('class', 'header__left__item')
     const aBoys = document.createElement('a')
-    aBoys.setAttribute('href', '')
-
+    aBoys.setAttribute('href', '#')
     aBoys.textContent = 'Boys'
+    aBoys.addEventListener('click', function () {
+        state.selectedFilter = 'Boys'
+        state.selectedItem = null
+        render()
+    })
+    
     liBoys.append(aBoys)
 
     const liSale = document.createElement('li')
     liSale.setAttribute('class', 'header__left__item')
     const aSale = document.createElement('a')
-    aSale.setAttribute('href', '')
-
+    aSale.setAttribute('href', '#')
     aSale.textContent = 'Sale'
+    aSale.addEventListener('click', function () {
+        state.selectedFilter = 'Sale'
+        state.selectedItem = null
+        render()
+    })
+    
     liSale.append(aSale)
 
     ulheaderLeft.append(liGirls, liBoys, liSale)
@@ -221,6 +241,10 @@ const state = {
   function renderProductItem(product, productList) {
     const productEl = document.createElement('li')
     productEl.setAttribute('class', 'product-item')
+    productEl.addEventListener('click', function () {
+        state.selectedItem = product
+        render()
+      })
   
     const imgEl = document.createElement('img')
     imgEl.setAttribute('class', 'product-item__image')
@@ -263,10 +287,32 @@ const state = {
   
     productList.append(productEl)
   }
+
+  function renderItemDetails(mainEl) {
+    const divEl = document.createElement('div')
+    divEl.setAttribute('class', 'product-details')
   
-  function renderMain() {
-    const mainEl = document.createElement('main')
+    const imgEl = document.createElement('img')
+    imgEl.setAttribute('class', 'product-details__image')
+    imgEl.setAttribute('src', state.selectedItem.image)
   
+    const titleEl = document.createElement('h2')
+    titleEl.setAttribute('class', 'product-details__title')
+    titleEl.textContent = state.selectedItem.name
+  
+    const addToBagBtn = document.createElement('button')
+    addToBagBtn.setAttribute('class', 'product-details__add-to-bag')
+    addToBagBtn.textContent = 'ADD TO BAG'
+    addToBagBtn.addEventListener('click', function () {
+      state.selectedItem = null
+      render()
+    })
+  
+    divEl.append(imgEl, titleEl, addToBagBtn)
+    mainEl.append(divEl)
+  }
+
+  function renderProductList(mainEl){
     const h2El = document.createElement('h2')
     h2El.textContent = 'Home'
     h2El.setAttribute('class', 'main-title')
@@ -274,24 +320,31 @@ const state = {
     const productList = document.createElement('ul')
     productList.setAttribute('class', 'product-list')
   
-    for (const product of state.store) {
+    for (const product of getItemsToDisplay()) {
       renderProductItem(product, productList)
     }
   
     mainEl.append(h2El, productList)
+  }
+  
+  function renderMain() {
+    const mainEl = document.createElement('main')
+  
+ // If there is no item selected: show a list of products
+  // If there IS an an item selected: show details about that item
+  if (state.selectedItem !== null) {
+    // An item is selected here: Show details about my item
+    renderItemDetails(mainEl)
+  } else {
+    // No item is selected here: Show the list of items
+    renderProductList(mainEl)
+  }
+
   
     document.body.append(mainEl)
   }
   
-  /* 
-  <footer>
-    <h2>Hollixton</h2>
-    <div>
-      <img />
-      <span>United Kingdom</span>
-    </div>
-  </footer>
-  */
+
   
   function renderFooter() {
     const footerEl = document.createElement('footer')
