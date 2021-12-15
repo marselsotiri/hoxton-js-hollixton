@@ -314,7 +314,7 @@ const state = {
 
   function renderProductList(mainEl){
     const h2El = document.createElement('h2')
-    h2El.textContent = 'Home'
+    h2El.textContent = state.selectedFilter
     h2El.setAttribute('class', 'main-title')
   
     const productList = document.createElement('ul')
