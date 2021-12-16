@@ -150,6 +150,16 @@
         {
           "id": 12,
           "quantity": 1
+        },
+        {
+        "id": 11,
+        "type": "Girls",
+        "name": "Crop Oversized Hoodie",
+        "image": "https://img.hollisterco.com/is/image/anf/KIC_352-3541-0604-100_prod1",
+        "price": 35,
+        "discountedPrice": 12.99,
+        "dateEntered": "2021/08/01",
+        "stock": 8
         }
       ]
     }

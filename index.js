@@ -2,7 +2,7 @@ const state = {
     store: [],
     modal: '',
     search: '',
-    users: null,
+    user: null,
     selectedItem: null,
     selectedFilter: '',
     bag: []
@@ -40,7 +40,7 @@ function renderSearchModal() {
     formEl.addEventListener('submit', function (event) {
         event.preventDefault()
 
-       state.search = searchInput.value
+        state.search = searchInput.value
 
         state.modal = ''
 
@@ -61,10 +61,90 @@ function renderSearchModal() {
     document.body.append(modalWrapperEl)
 }
 
+function renderUser() {
+
+    const modalWrapperEl = document.createElement('div')
+    modalWrapperEl.setAttribute('class', 'modal-wrapper')
+    modalWrapperEl.addEventListener('click', function () {
+        state.modal = ''
+        render()
+    })
+
+    const modalEl = document.createElement('div')
+    modalEl.setAttribute('class', 'modal')
+    modalEl.addEventListener('click', function (event) {
+        event.stopPropagation()
+    })
+
+    const closeModalBtn = document.createElement('button')
+    closeModalBtn.setAttribute('class', 'modal__close-btn')
+    closeModalBtn.textContent = 'X'
+    closeModalBtn.addEventListener('click', function () {
+        state.modal = ''
+        render()
+    })
+
+    const titleEl = document.createElement('h2')
+    titleEl.textContent = 'Login'
+
+    const formEl = document.createElement('form')
+    formEl.addEventListener('submit', function (event) {
+        event.preventDefault()
+
+
+
+        let email = userEmailInput.value
+        let password = userPasswordnInput.value
+
+        getUser(email)
+            .then(function (user) {
+                if (user.password === password) {
+
+                    state.user = user
+
+                    render()
+
+                } else {
+
+                    console.log('wrong')
+
+                }
+            })
+
+
+        state.modal = ''
+
+        render()
+    })
+
+    const userEmailInput = document.createElement('input')
+    userEmailInput.setAttribute('type', 'text')
+
+    const userPasswordnInput = document.createElement('input')
+
+    const buttonElement = document.createElement('button')
+    buttonElement.textContent = 'Sing In'
+    
+
+    // searchInput.setAttribute('name', 'search')
+    // searchInput.setAttribute('type', 'text')
+
+
+
+    formEl.append(userEmailInput, userPasswordnInput, buttonElement)
+
+    modalEl.append(closeModalBtn, titleEl, formEl)
+    modalWrapperEl.append(modalEl)
+
+    document.body.append(modalWrapperEl)
+}
+
 function renderModal() {
     if (state.modal === '') return
 
     if (state.modal === 'search') renderSearchModal()
+    if (state.modal === 'user') renderUser()
+
 }
 
 function getItemsToDisplay() {
@@ -100,6 +180,10 @@ function getItemsToDisplay() {
 
 function getStoreItems() {
     return fetch('http://localhost:3000/store').then(resp => resp.json())
+}
+
+function getUser(email) {
+    return fetch(`http://localhost:3000/users/${email}`).then(resp => resp.json())
 }
 
 // HELPER FUNCTIONS
@@ -386,16 +470,6 @@ function renderFooter() {
     document.body.append(footerEl)
 }
 
-// function listenToSearchInput () {
-//     formInputSearch.addEventListener('submit', function (event) {
-//       event.preventDefault()
-  
-//       // update state
-//       state.search = formInputSearch.search.value
-//       // render
-//       render()
-//     })
-//   }
 
 
 function render() {
